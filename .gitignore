@@ -1,0 +1,28 @@
+# ---- secrets ----
+.env
+.env.*
+!.env.example
+
+# ---- runtime data (logs contain code from the repos you analyse) ----
+data/
+workspace/
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---- editors / OS ----
+.idea/
+.vscode/*
+!.vscode/launch.json
+.DS_Store
+Thumbs.db

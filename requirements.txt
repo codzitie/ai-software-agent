@@ -1,0 +1,20 @@
+# --- Agent framework ---
+langgraph>=0.2.50
+langgraph-checkpoint-sqlite>=2.0.0
+langchain-core>=0.3.0
+langchain-anthropic>=0.3.0       # matches ANTHROPIC_API_KEY in main.py; swap for your provider
+
+# --- Data models and config ---
+pydantic>=2.7
+python-dotenv>=1.0
+
+# --- Semantic code search (src/tools/semantic_search.py) ---
+pinecone>=7.0.0
+sentence-transformers>=3.0       # local embeddings, no extra API key
+
+# --- Tools: text search, syntax checks, dependency analysis ---
+pathspec>=0.12                   # .gitignore-style ignore rules in filesystem.py
+networkx>=3.2                    # dependency graph and circular-dependency detection
+
+# --- Testing the agent itself ---
+pytest>=8.0
