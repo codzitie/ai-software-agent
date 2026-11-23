@@ -103,6 +103,33 @@ def read_file(root, rel_path: str, max_chars: int = 20000) -> str:
         text = text[:max_chars] + "\n… [truncated]"
     return text
 
+def read_for_llm(root, rel_path: str, max_chars: int = 20000) -> tuple[str, bool]:
+    """File text for an LLM. Returns (text, was_cut).
+
+    A long file is cut at a line boundary and followed by a note saying the rest is
+    only not displayed, so the model cannot mistake the cut for broken code.
+    """
+    path = resolve_safe(root, rel_path)
+    if not path.is_file():
+        raise FileNotFoundError(rel_path)
+    with open(path, "rb") as f:
+        data = f.read(settings.MAX_FILE_BYTES)
+    if b"\0" in data[:1024]:
+        raise ToolError(f"Binary file: {rel_path}")
+
+    text = data.decode("utf-8", errors="replace")
+    if len(text) <= max_chars:
+        return text, False
+
+    cut = text.rfind("\n", 0, max_chars)
+    shown = text[: cut if cut > 0 else max_chars]
+    note = (
+        f"\n\n[NOTE: this file has {text.count(chr(10)) + 1} lines. Lines 1-{shown.count(chr(10)) + 1} "
+        "are shown. The rest is only not displayed. The file is not broken or cut off here, "
+        "so do not treat the end of this view as an error.]"
+    )
+    return shown + note, True
+
 def read_window(root, rel_path: str, line: int, radius: int = 25, numbered: bool = False) -> str:
     """Lines around `line`. Never adds a '[truncated]' marker to the code itself."""
     path = resolve_safe(root, rel_path)

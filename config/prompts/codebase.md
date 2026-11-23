@@ -17,3 +17,4 @@ You are used in two ways. The user message tells you which.
      Leave out files that are not useful. An empty list is acceptable if nothing fits.
 
 Use only what you were given. If something is unclear, say so, and do not guess.
+A [NOTE] at the end of a file means the rest is not displayed. It is not a syntax error.

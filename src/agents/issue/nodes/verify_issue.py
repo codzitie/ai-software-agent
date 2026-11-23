@@ -7,7 +7,7 @@ from src.state.graph_state import AgentState
 from src.state.schemas import IssueReport
 from src.tools import filesystem, syntax_checker, test_runner
 
-MAX_FILE_CHARS = 5000
+MAX_FILE_CHARS = 15000
 
 
 def verify_issue_node(state: AgentState) -> dict:
@@ -15,7 +15,7 @@ def verify_issue_node(state: AgentState) -> dict:
     summary = state["codebase_summary"]
 
     files_text = "\n\n".join(
-        f"### {n.path}\n{filesystem.read_file(root, n.path, max_chars=MAX_FILE_CHARS)}"
+        f"### {n.path}\n{filesystem.read_for_llm(root, n.path, max_chars=MAX_FILE_CHARS)[0]}"
         for n in summary.relevant_files
     )
 

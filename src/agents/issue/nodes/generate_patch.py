@@ -16,14 +16,11 @@ def generate_patch_node(state: AgentState) -> dict:
     cause = state["root_cause"]
 
     # Files are clean here: prepare_retry rolls back before we get back to this node.
-    source = filesystem.read_file(root, cause.file, max_chars=FULL_FILE_CHARS)
-    if source.endswith("[truncated]"):
-        # File too long: never show a cut-off file. Show the region around the error instead.
-        line = state.get("error_line")
-        if line:
-            source = filesystem.read_window(root, cause.file, line, radius=WINDOW_RADIUS)
-        else:
-            source = source.rsplit("\n", 1)[0]   # drop the marker line so it cannot be copied
+    source, was_cut = filesystem.read_for_llm(root, cause.file, max_chars=FULL_FILE_CHARS)
+    line = state.get("error_line")
+    if was_cut and line:
+        # Long file with a known error line: show the region around it instead.
+        source = filesystem.read_window(root, cause.file, line, radius=WINDOW_RADIUS)
     feedback = state.get("feedback", [])[-MAX_FEEDBACK_SHOWN:]
     feedback_text = (
         "\n\n".join(f"Previous attempt {i + 1} failed:\n{f}" for i, f in enumerate(feedback))

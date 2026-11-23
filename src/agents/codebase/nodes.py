@@ -14,7 +14,7 @@ DOC_PATTERNS = ["README*", "ARCHITECTURE*", "CONTRIBUTING*", "docs/**/*.md", "*.
 MAX_DOC_CHARS = 6000
 MAX_DOCS = 8
 MAX_CANDIDATES = 8
-MAX_FILE_CHARS = 5000
+MAX_FILE_CHARS = 10000
 
 
 # ---------- structured outputs ----------
@@ -84,7 +84,7 @@ def locate_files_node(state: AgentState) -> dict:
 def summarize_context_node(state: AgentState) -> dict:
     root = state["repo_path"]
     files_text = "\n\n".join(
-        f"### {p}\n{filesystem.read_file(root, p, max_chars=MAX_FILE_CHARS)}"
+        f"### {p}\n{filesystem.read_for_llm(root, p, max_chars=MAX_FILE_CHARS)[0]}"
         for p in state.get("candidate_files", [])
     ) or "No candidate files were found."
 
