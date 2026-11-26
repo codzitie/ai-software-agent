@@ -2,16 +2,26 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Agent: Job-Pilot",
+      "name": "Mini agent (fake LLM)",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/main.py",
-      "args": ["--repo", "../Job-Pilot/"],
+      "program": "${workspaceFolder}/mini_agent.py",
+      "args": ["fix the syntax error in calc.py"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "Mini agent (Gemini)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/mini_agent.py",
+      "args": ["fix the syntax error in calc.py"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "justMyCode": false,
       "envFile": "${workspaceFolder}/.env",
-      "env": { "PYTHONPATH": "${workspaceFolder}" }
+      "env": { "USE_LLM": "1" }
     }
   ]
 }

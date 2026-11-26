@@ -34,4 +34,4 @@ def build_main_graph(checkpointer=None):
     g.add_edge("chat_reply", END)
     g.add_edge("unsupported", END)
 
-    return g.compile(checkpointer=checkpointer or get_checkpointer())
+    return g.compile(checkpointer=checkpointer)
