@@ -1,0 +1,13 @@
+{
+  "$schema": "https://langgra.ph/schema.json",
+  "dependencies": ["."],
+  "python_version": "3.13",
+  "graphs": {
+    "main": "./src/studio.py:graph",
+    "codebase": "./src/studio.py:codebase_graph",
+    "issue": "./src/studio.py:issue_graph",
+    "developer": "./src/studio.py:developer_graph",
+    "tester": "./src/studio.py:tester_graph"
+  },
+  "env": ".env"
+}

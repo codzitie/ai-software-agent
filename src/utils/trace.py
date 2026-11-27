@@ -5,7 +5,31 @@ import json
 import time
 from pathlib import Path
 
-from distro import name
+from src.tools import (code_modifier, coverage_tool, dependency, diff_reader, file_writer,
+                        filesystem, formatter, git_tool, import_checker, installer, manifest,
+                        project_inspector, scaffold, semantic_search, syntax_checker,
+                        test_result_parser, test_runner, text_search)
+
+targets = {
+    filesystem: ["tree", "glob_find", "read_file"],
+    text_search: ["search"],
+    semantic_search: ["search"],
+    syntax_checker: ["check_files"],
+    dependency: ["find_missing", "find_cycles"],
+    installer: ["install", "install_requirements"],
+    code_modifier: ["apply_edits", "rollback"],
+    test_runner: ["run"],
+    file_writer: ["write_files", "remove_created"],
+    project_inspector: ["inspect"],
+    scaffold: ["create"],
+    import_checker: ["check_imports"],
+    formatter: ["format_files"],
+    manifest: ["record_dependencies", "undo"],
+    git_tool: ["start_task", "commit", "reset_to", "finish_task", "abandon_task", "diff", "changed_files"],
+    diff_reader: ["analyze", "from_texts"],
+    coverage_tool: ["check_changed"],
+    test_result_parser: ["parse_pytest_output"],
+}
 from langchain_core.callbacks import BaseCallbackHandler
 from pydantic import BaseModel
 import re

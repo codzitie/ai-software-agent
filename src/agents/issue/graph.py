@@ -12,6 +12,8 @@ from src.agents.issue.nodes.run_tests import run_tests_node
 from src.agents.issue.nodes.verify_issue import verify_issue_node
 from src.agents.issue.routing import on_step_result, route_after_verify
 from src.state.graph_state import AgentState
+from src.agents.issue.nodes.tester_result import tester_result_node
+from src.agents.tester.graph import build_tester_graph
 
 
 def build_issue_graph():
@@ -24,6 +26,8 @@ def build_issue_graph():
     g.add_node("check_syntax", check_syntax_node)
     g.add_node("check_deps", check_deps_node)
     g.add_node("run_tests", run_tests_node)
+    g.add_node("tester", build_tester_graph())          # writes and runs tests for the patch
+    g.add_node("tester_result", tester_result_node)
     g.add_node("prepare_retry", prepare_retry_node)
     g.add_node("finalize", finalize_node)
 
@@ -35,7 +39,9 @@ def build_issue_graph():
     g.add_conditional_edges("apply_patch", on_step_result("apply_patch", "check_syntax"))
     g.add_conditional_edges("check_syntax", on_step_result("check_syntax", "check_deps"))
     g.add_conditional_edges("check_deps", on_step_result("check_deps", "run_tests"))
-    g.add_conditional_edges("run_tests", on_step_result("run_tests", "finalize"))
+    g.add_conditional_edges("run_tests", on_step_result("run_tests", "tester"))
+    g.add_edge("tester", "tester_result")
+    g.add_conditional_edges("tester_result", on_step_result("tester_result", "finalize"))
 
     g.add_edge("prepare_retry", "generate_patch")
     g.add_edge("finalize", END)

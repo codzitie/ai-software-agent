@@ -16,7 +16,7 @@ class Task(BaseModel):
 
 
 class Plan(BaseModel):
-    query_type: Literal["bug_fix", "new_project", "chat"]
+    query_type: Literal["bug_fix", "new_project", "new_feature", "chat"]
     summary: str
     tasks: list[Task] = Field(default_factory=list)
 
@@ -66,3 +66,101 @@ class TestResult(BaseModel):
     output: str
     command: str | None = None
     exit_code: int | None = None
+
+class PlannedFile(BaseModel):
+    path: str
+    action: Literal["create", "edit"]
+    purpose: str
+    depends_on: list[str] = Field(default_factory=list)
+
+
+class DevTask(BaseModel):
+    summary: str
+    project_name: str | None = None
+    layout: Literal["flat", "src"] = "flat"
+    files: list[PlannedFile]
+    dependencies: list[str] = Field(default_factory=list)
+    test_command: str = "pytest -q"
+
+
+class GeneratedFile(BaseModel):
+    path: str
+    content: str
+    imports_local: list[str] = Field(default_factory=list)
+    imports_third_party: list[str] = Field(default_factory=list)
+
+class TestCase(BaseModel):
+    __test__ = False
+    id: str
+    target: str                       # path/to/file.py::symbol
+    kind: Literal["happy_path", "edge_case", "error_case", "regression"]
+    description: str
+    inputs: str
+    expected: str
+    test_file: str
+
+
+class TestPlan(BaseModel):
+    __test__ = False
+    summary: str
+    cases: list[TestCase]
+    needs_fixtures: list[str] = Field(default_factory=list)
+
+
+class TestDiagnosis(BaseModel):
+    __test__ = False
+    verdict: Literal["test_bug", "implementation_bug"]
+    confidence: Literal["high", "medium", "low"]
+    reason: str
+    fix_hint: str = ""
+
+
+# ---------- developer agent ----------
+class PlannedFile(BaseModel):
+    path: str
+    action: Literal["create", "edit"]
+    purpose: str
+    depends_on: list[str] = Field(default_factory=list)
+
+
+class DevTask(BaseModel):
+    summary: str
+    project_name: str | None = None
+    layout: Literal["flat", "src"] = "flat"
+    files: list[PlannedFile]
+    dependencies: list[str] = Field(default_factory=list)
+    test_command: str = "pytest -q"
+
+
+class GeneratedFile(BaseModel):
+    path: str
+    content: str
+    imports_local: list[str] = Field(default_factory=list)
+    imports_third_party: list[str] = Field(default_factory=list)
+
+
+# ---------- tester agent ----------
+class TestCase(BaseModel):
+    __test__ = False
+    id: str
+    target: str
+    kind: Literal["happy_path", "edge_case", "error_case", "regression"]
+    description: str
+    inputs: str
+    expected: str
+    test_file: str
+
+
+class TestPlan(BaseModel):
+    __test__ = False
+    summary: str
+    cases: list[TestCase]
+    needs_fixtures: list[str] = Field(default_factory=list)
+
+
+class TestDiagnosis(BaseModel):
+    __test__ = False
+    verdict: Literal["test_bug", "implementation_bug"]
+    confidence: Literal["high", "medium", "low"]
+    reason: str
+    fix_hint: str = ""

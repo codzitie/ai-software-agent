@@ -16,6 +16,12 @@ def finalize_node(state: AgentState) -> dict:
             f"Change: {state['patch'].explanation}\n"
             f"Files changed: {', '.join(files)}"
         )
+        t_status, t_report = state.get("tester_status"), state.get("tester_report")
+        if t_status == "passed":
+            text += f"\nTests added and passing:\n{t_report}"
+        elif t_status in ("blocked", "failed"):
+            text += ("\nNote: I could not add new tests for this fix, so only the original "
+                     f"reproduction was checked.\n{(t_report or '')[:600]}")
     elif status == "not_reproducible":
         text = (
             "I could not reproduce this issue.\n"

@@ -39,7 +39,12 @@ SUMMARY_KEEP_LAST = 6               # recent messages kept verbatim
 MAX_PATCH_ATTEMPTS = 3
 
 # ---- graph ----
-RECURSION_LIMIT = 100               # LangGraph's default (25) is too low for the retry loop
+RECURSION_LIMIT = 300               # LangGraph's default (25) is too low for the retry loop
+
+# ---- tester ----
+MAX_TEST_ATTEMPTS = 3
+MAX_COVERAGE_ROUNDS = 1
+TESTER_COVERAGE_TARGET = 80         # % of changed lines that must be executed
 
 # ---- logging ----
 LOG_LEVEL = "INFO"                  # file level

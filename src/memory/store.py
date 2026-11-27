@@ -9,8 +9,9 @@ import threading
 import time
 from abc import ABC, abstractmethod
 from typing import Any
-
 from config import settings
+from src.utils.text import content_to_text
+from pathlib import Path
 
 
 class Store(ABC):
@@ -46,7 +47,7 @@ class Store(ABC):
 
 class SQLiteStore(Store):
     def __init__(self, path):
-        path = settings.Path(path) if hasattr(settings, "Path") else path
+        path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
         self._conn = sqlite3.connect(path, check_same_thread=False)
         self._conn.row_factory = sqlite3.Row
@@ -101,6 +102,7 @@ class SQLiteStore(Store):
 
     # ---- summaries ----
     def put_summary(self, thread_id, text):
+        text = content_to_text(text).strip()
         self._run(
             "INSERT INTO summaries(thread_id, text, updated_at) VALUES (?,?,?) "
             "ON CONFLICT(thread_id) DO UPDATE SET text=excluded.text, updated_at=excluded.updated_at",
@@ -113,6 +115,7 @@ class SQLiteStore(Store):
 
     # ---- memories ----
     def put_memory(self, project_id, kind, key, content):
+        content = content_to_text(content).strip()
         if self.get_memory(project_id, kind, key) == content:
             return False
         self._run(

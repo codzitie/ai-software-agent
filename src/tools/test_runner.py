@@ -15,8 +15,8 @@ from src.tools import filesystem, runtime
 from src.utils.errors import ToolError, UnsafeCommandError
 
 _FORBIDDEN = re.compile(r"[;&|<>`$\n\r(){}]")
-_PYTEST_FLAGS = {"-x", "-q", "-v", "-vv", "-s", "-l", "--lf", "--ff"}
-_PYTEST_PREFIXES = ("--tb=", "--maxfail=")
+_PYTEST_FLAGS = {"-x", "-q", "-v", "-vv", "-s", "-l", "--lf", "--ff", "--no-header", "--color=no"}
+_PYTEST_PREFIXES = ("--tb=", "--maxfail=", "--color=", "-r")   # -r covers -rfE, -ra, ...
 _SECRET_HINTS = ("KEY", "TOKEN", "SECRET", "PASSWORD")
 
 

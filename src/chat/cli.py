@@ -17,6 +17,32 @@ Press Ctrl+C during a run to stop it (progress is saved)."""
 def _progress(node: str) -> None:
     print(f"  · {node}", flush=True)
 
+def _confirm(payload: dict) -> bool:
+    print("\nThe agent wants to install packages:")
+    for pkg in payload.get("packages", []):
+        print(f"  - {pkg}")
+    print(f"Reason:  {payload.get('reason', '')}")
+    print(f"Project: {payload.get('repo', '')}")
+    while True:
+        answer = input("Install? [y/n]> ").strip().lower()
+        if answer in ("y", "yes"):
+            return True
+        if answer in ("n", "no"):
+            return False
+
+
+def _drive(session: ChatSession, first_reply: str) -> None:
+    """Show the reply, or keep asking for confirmations until the run finishes."""
+    reply = first_reply
+    while payload := session.pending_interrupt():
+        try:
+            approved = _confirm(payload)
+        except (EOFError, KeyboardInterrupt):
+            print("\nPaused. Type /resume to answer later.\n")
+            return
+        reply = session.answer(approved, on_step=_progress)
+    if reply:
+        print(f"\nagent> {reply}\n")
 
 def run_cli(repo: str | None = None, thread_id: str | None = None) -> None:
     setup_logging()
@@ -54,9 +80,9 @@ def run_cli(repo: str | None = None, thread_id: str | None = None) -> None:
                 except AgentError as exc:
                     print(f"Error: {exc}")
             elif cmd == "/resume":
-                print(f"\nagent> {session.resume(on_step=_progress)}\n")
+                _drive(session, session.resume(on_step=_progress))
             else:
                 print("Unknown command. Type /help.")
             continue
 
-        print(f"\nagent> {session.send(text, on_step=_progress)}\n")
+        _drive(session, session.send(text, on_step=_progress))

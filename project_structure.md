@@ -1,3 +1,5 @@
+<!-- Old Structrure (before starting development in developer and tester agents) -->
+
 ai_software_agent/
 ├── pyproject.toml / requirements.txt
 ├── .env.example                  # API keys, DB config

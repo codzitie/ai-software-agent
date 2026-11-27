@@ -64,4 +64,8 @@ def _bootstrap(base: Path, python: Path) -> None:
                 log.warning("requirements.txt install failed:\n%s", result.stderr[-1500:])
     except subprocess.TimeoutExpired:
         log.warning("Environment bootstrap timed out")
-        
+
+def rebootstrap(root) -> None:
+    """Force the next python_for() to install requirements.txt again (only for envs under data/envs)."""
+    marker = env_dir(Path(root).resolve()) / ".bootstrapped"
+    marker.unlink(missing_ok=True)

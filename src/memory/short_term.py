@@ -12,6 +12,7 @@ from config import settings
 from config.settings import load_prompt
 from src.llm.provider import get_llm
 from src.memory.store import Store, get_store
+from src.utils.text import content_to_text
 
 
 def _jsonable(obj: Any) -> Any:
@@ -21,7 +22,7 @@ def _jsonable(obj: Any) -> Any:
 
 
 def _format_messages(messages: list[BaseMessage]) -> str:
-    return "\n".join(f"{m.type}: {m.content}" for m in messages)
+    return "\n".join(f"{m.type}: {content_to_text(m.content)}" for m in messages)
 
 
 class ShortTermMemory:
@@ -82,6 +83,6 @@ class ShortTermMemory:
                 ),
             ]
         )
-        summary = reply.content
+        summary = content_to_text(reply.content).strip()
         self.store.put_summary(self.thread_id, summary)
         return summary, recent
